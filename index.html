@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tennis Tournament Manager</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #00a86b;
+        --secondary: #ffd700;
+        --dark: #1a1a1a;
+        --light: #f5f5f5;
+        --white: #ffffff;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--light);
+        color: var(--dark);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        background: var(--primary);
+        color: var(--white);
+        padding: 20px;
+        text-align: center;
+        margin: -20px -20px 20px;
+        box-shadow: var(--shadow);
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+
+      h2 {
+        font-size: 20px;
+        margin: 20px 0 15px;
+        color: var(--primary);
+      }
+
+      .subtitle {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .nav-tabs {
+        display: flex;
+        background: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .nav-tab {
+        flex: 1;
+        padding: 12px;
+        text-align: center;
+        cursor: pointer;
+        background: var(--white);
+        border: none;
+        font-size: 14px;
+        transition: all 0.3s;
+      }
+
+      .nav-tab.active {
+        background: var(--primary);
+        color: var(--white);
+      }
+
+      .content-section {
+        display: none;
+        animation: fadeIn 0.3s;
+      }
+
+      .content-section.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .card {
+        background: var(--white);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: var(--shadow);
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: var(--dark);
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+      }
+
+      input[type='checkbox'] {
+        width: auto;
+        margin-right: 10px;
+      }
+
+      .btn {
+        background: var(--primary);
+        color: var(--white);
+        padding: 12px 24px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .btn:hover {
+        background: #008f5a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 168, 107, 0.3);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .tournament-bracket {
+        overflow-x: auto;
+        padding: 20px 0;
+      }
+
+      .match {
+        background: var(--white);
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        position: relative;
+      }
+
+      .match.completed {
+        border-color: var(--primary);
+        background: #f0fdf4;
+      }
+
+      .match-header {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      .player {
+        padding: 8px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .player.winner {
+        font-weight: bold;
+        color: var(--primary);
+      }
+
+      .score {
+        background: var(--light);
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 14px;
+      }
+
+      .availability-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .time-slot {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: var(--light);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .time-slot:hover {
+        background: #e0e0e0;
+      }
+
+      .time-slot input {
+        margin-right: 8px;
+      }
+
+      .participants-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .participant-item {
+        padding: 10px;
+        background: var(--light);
+        margin-bottom: 5px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .badge {
+        background: var(--primary);
+        color: var(--white);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+      }
+
+      .status-message {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .status-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .status-info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+      }
+
+      .admin-panel {
+        background: #fff3cd;
+        border: 2px dashed #ffc107;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .admin-panel h3 {
+        color: #856404;
+        margin-bottom: 10px;
+      }
+
+      .bracket-round {
+        margin-bottom: 30px;
+      }
+
+      .round-title {
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 10px;
+        }
+
+        header {
+          margin: -10px -10px 15px;
+        }
+      }
+
+      .share-button {
+        background: #25d366;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 15px;
+      }
+
+      .share-button:hover {
+        background: #1fa855;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🎾 Tennis Tournament Manager</h1>
+        <p class="subtitle">Organizza i tuoi tornei in modo semplice</p>
+      </header>
+
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showSection('registration')">Iscrizione</button>
+        <button class="nav-tab" onclick="showSection('brackets')">Tabelloni</button>
+        <button class="nav-tab" onclick="showSection('results')">Risultati</button>
+        <button class="nav-tab" onclick="showSection('admin')">Admin</button>
+      </div>
+
+      <!-- Sezione Iscrizione -->
+      <div id="registration" class="content-section active">
+        <div class="card">
+          <h2>Iscrizione Torneo</h2>
+          <form id="registrationForm">
+            <div class="form-group">
+              <label>Nome e Cognome</label>
+              <input type="text" name="name" required placeholder="Mario Rossi" />
+            </div>
+
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" name="email" required placeholder="mario@email.com" />
+            </div>
+
+            <div class="form-group">
+              <label>Numero WhatsApp</label>
+              <input type="tel" name="phone" required placeholder="+39 333 1234567" />
+            </div>
+
+            <div class="form-group">
+              <label>Tornei a cui vuoi partecipare</label>
+              <div class="checkbox-group">
+                <input type="checkbox" id="singles" name="tournaments" value="singles" />
+                <label for="singles">Singolare</label>
+              </div>
+              <div class="checkbox-group">
+                <input type="checkbox" id="doubles" name="tournaments" value="doubles" />
+                <label for="doubles">Doppio</label>
+              </div>
+            </div>
+
+            <div class="form-group" id="partnerSection" style="display: none">
+              <label>Nome del tuo compagno di doppio</label>
+              <input type="text" name="partner" placeholder="Nome del partner" />
+            </div>
+
+            <div class="form-group">
+              <label>Disponibilità oraria</label>
+              <p style="font-size: 14px; color: #666; margin-bottom: 10px">
+                Seleziona tutti gli orari in cui sei disponibile
+              </p>
+              <div class="availability-grid">
+                <div class="time-slot">
+                  <input type="checkbox" id="lun-sera" name="availability" value="lun-sera" />
+                  <label for="lun-sera">Lun sera</label>
+                </div>
+                <div class="time-slot">
+                  <input type="checkbox" id="mar-sera" name="availability" value="mar-sera" />
+                  <label for="mar-sera">Mar sera</label>
+                </div>
+                <div class="time-slot">
+                  <input type="checkbox" id="mer-sera" name="availability" value="mer-sera" />
+                  <label for="mer-sera">Mer sera</label>
+                </div>
+                <div class="time-slot">
+                  <input type="checkbox" id="gio-sera" name="availability" value="gio-sera" />
+                  <label for="gio-sera">Gio sera</label>
+                </div>
+                <div class="time-slot">
+                  <input type="checkbox" id="ven-sera" name="availability" value="ven-sera" />
+                  <label for="ven-sera">Ven sera</label>
+                </div>
+                <div class="time-slot">
+                  <input type="checkbox" id="sab-matt" name="availability" value="sab-matt" />
+                  <label for="sab-matt">Sab mattina</label>
+                </div>
+                <div class="time-slot">
+                  <input type="checkbox" id="sab-pom" name="availability" value="sab-pom" />
+                  <label for="sab-pom">Sab pomeriggio</label>
+                </div>
+                <div class="time-slot">
+                  <input type="checkbox" id="dom-matt" name="availability" value="dom-matt" />
+                  <label for="dom-matt">Dom mattina</label>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn">Iscriviti al Torneo</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Partecipanti iscritti</h3>
+          <ul class="participants-list" id="participantsList">
+            <li class="participant-item">
+              <span>Mario Rossi</span>
+              <div>
+                <span class="badge">Singolo</span>
+                <span class="badge">Doppio</span>
+              </div>
+            </li>
+            <li class="participant-item">
+              <span>Luigi Bianchi</span>
+              <span class="badge">Singolo</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sezione Tabelloni -->
+      <div id="brackets" class="content-section">
+        <div class="card">
+          <h2>Tabellone Singolare</h2>
+          <div class="tournament-bracket">
+            <div class="bracket-round">
+              <div class="round-title">Quarti di Finale</div>
+              <div class="match">
+                <div class="match-header">Match 1 - Lun 18:00 Campo 1</div>
+                <div class="player">
+                  Mario Rossi
+                  <span class="score">-</span>
+                </div>
+                <div class="player">
+                  Luigi Bianchi
+                  <span class="score">-</span>
+                </div>
+              </div>
+              <div class="match">
+                <div class="match-header">Match 2 - Mar 19:00 Campo 2</div>
+                <div class="player">
+                  Giuseppe Verdi
+                  <span class="score">-</span>
+                </div>
+                <div class="player">
+                  Antonio Neri
+                  <span class="score">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Tabellone Doppio</h2>
+          <div class="tournament-bracket">
+            <div class="bracket-round">
+              <div class="round-title">Semifinali</div>
+              <div class="match completed">
+                <div class="match-header">Match 1 - Completato</div>
+                <div class="player winner">
+                  Rossi/Bianchi
+                  <span class="score">6-4 6-3</span>
+                </div>
+                <div class="player">
+                  Verdi/Neri
+                  <span class="score">4-6 3-6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sezione Risultati -->
+      <div id="results" class="content-section">
+        <div class="card">
+          <h2>Inserisci Risultato</h2>
+          <form id="resultForm">
+            <div class="form-group">
+              <label>Seleziona la tua partita</label>
+              <select name="match" required>
+                <option value="">Scegli...</option>
+                <option value="match1">Singolo Q1: Rossi vs Bianchi</option>
+                <option value="match2">Singolo Q2: Verdi vs Neri</option>
+                <option value="match3">Doppio S1: Rossi/Bianchi vs Verdi/Neri</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Risultato Set 1</label>
+              <div style="display: flex; gap: 10px">
+                <input type="number" name="set1_p1" min="0" max="7" placeholder="Tu" required />
+                <input
+                  type="number"
+                  name="set1_p2"
+                  min="0"
+                  max="7"
+                  placeholder="Avversario"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Risultato Set 2</label>
+              <div style="display: flex; gap: 10px">
+                <input type="number" name="set2_p1" min="0" max="7" placeholder="Tu" />
+                <input type="number" name="set2_p2" min="0" max="7" placeholder="Avversario" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Risultato Set 3 (se giocato)</label>
+              <div style="display: flex; gap: 10px">
+                <input type="number" name="set3_p1" min="0" max="7" placeholder="Tu" />
+                <input type="number" name="set3_p2" min="0" max="7" placeholder="Avversario" />
+              </div>
+            </div>
+
+            <button type="submit" class="btn">Invia Risultato</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Ultimi risultati inseriti</h3>
+          <div class="match completed">
+            <div class="match-header">Doppio S1 - 10 minuti fa</div>
+            <div class="player winner">
+              Rossi/Bianchi
+              <span class="score">6-4 6-3</span>
+            </div>
+            <div class="player">
+              Verdi/Neri
+              <span class="score">4-6 3-6</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sezione Admin -->
+      <div id="admin" class="content-section">
+        <div class="admin-panel">
+          <h3>⚠️ Area Amministratore</h3>
+          <p style="font-size: 14px; color: #856404">Questa sezione è protetta da password</p>
+        </div>
+
+        <div class="card">
+          <h2>Accesso Admin</h2>
+          <form id="adminLoginForm">
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" name="password" required placeholder="Inserisci password" />
+            </div>
+            <button type="submit" class="btn">Accedi</button>
+          </form>
+        </div>
+
+        <div id="adminContent" style="display: none">
+          <div class="card">
+            <h2>Gestione Torneo</h2>
+            <button class="btn" onclick="generateBrackets()">Genera Tabelloni</button>
+            <button class="btn btn-secondary" onclick="exportData()">Esporta Dati</button>
+          </div>
+
+          <div class="card">
+            <h3>Assegna Orari Partite</h3>
+            <form id="scheduleForm">
+              <div class="form-group">
+                <label>Partita</label>
+                <select name="matchToSchedule">
+                  <option>Match 1: Rossi vs Bianchi</option>
+                  <option>Match 2: Verdi vs Neri</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Data e Ora</label>
+                <input type="datetime-local" name="datetime" required />
+              </div>
+              <div class="form-group">
+                <label>Campo</label>
+                <select name="court">
+                  <option>Campo 1</option>
+                  <option>Campo 2</option>
+                  <option>Campo 3</option>
+                </select>
+              </div>
+              <button type="submit" class="btn">Assegna</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px">
+        <a href="#" class="share-button" onclick="shareOnWhatsApp()">
+          <span>📱</span> Condividi su WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <script>
+      // Gestione navigazione
+      function showSection(sectionId) {
+        // Nascondi tutte le sezioni
+        document.querySelectorAll('.content-section').forEach((section) => {
+          section.classList.remove('active');
+        });
+
+        // Rimuovi active da tutti i tab
+        document.querySelectorAll('.nav-tab').forEach((tab) => {
+          tab.classList.remove('active');
+        });
+
+        // Mostra la sezione selezionata
+        document.getElementById(sectionId).classList.add('active');
+
+        // Attiva il tab corrispondente
+        event.target.classList.add('active');
+      }
+
+      // Mostra/nascondi campo partner per doppio
+      document.getElementById('doubles').addEventListener('change', function () {
+        const partnerSection = document.getElementById('partnerSection');
+        partnerSection.style.display = this.checked ? 'block' : 'none';
+      });
+
+      // Gestione form iscrizione
+      document.getElementById('registrationForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Simula salvataggio dati
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+
+        // Mostra messaggio di successo
+        const successMsg = document.createElement('div');
+        successMsg.className = 'status-message status-success';
+        successMsg.textContent =
+          'Iscrizione completata con successo! Riceverai una conferma su WhatsApp.';
+        this.parentElement.insertBefore(successMsg, this);
+
+        // Reset form
+        this.reset();
+
+        // Rimuovi messaggio dopo 5 secondi
+        setTimeout(() => successMsg.remove(), 5000);
+      });
+
+      // Gestione form risultati
+      document.getElementById('resultForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const successMsg = document.createElement('div');
+        successMsg.className = 'status-message status-info';
+        successMsg.textContent = "Risultato inviato! In attesa di conferma dall'avversario.";
+        this.parentElement.insertBefore(successMsg, this);
+
+        this.reset();
+        setTimeout(() => successMsg.remove(), 5000);
+      });
+
+      // Gestione login admin
+      document.getElementById('adminLoginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const password = this.password.value;
+        if (password === 'admin123') {
+          // Password di esempio
+          document.getElementById('adminContent').style.display = 'block';
+          this.parentElement.style.display = 'none';
+        } else {
+          alert('Password errata!');
+        }
+      });
+
+      // Funzione per condividere su WhatsApp
+      function shareOnWhatsApp() {
+        const text = '🎾 Partecipa al nostro torneo di tennis! Iscriviti qui: ';
+        const url = window.location.href;
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text + url)}`;
+        window.open(whatsappUrl, '_blank');
+      }
+
+      // Funzioni admin placeholder
+      function generateBrackets() {
+        alert('Tabelloni generati con successo!');
+      }
+
+      function exportData() {
+        alert('Dati esportati!');
+      }
+
+      // Salva dati in localStorage per persistenza
+      function saveData(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+      }
+
+      function getData(key) {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : null;
+      }
+
+      // Inizializzazione
+      document.addEventListener('DOMContentLoaded', function () {
+        // Carica eventuali dati salvati
+        const savedParticipants = getData('participants');
+        if (savedParticipants) {
+          // Popola la lista partecipanti
+        }
+      });
+    </script>
+  </body>
+</html>

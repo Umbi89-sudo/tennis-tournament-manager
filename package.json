@@ -1,0 +1,8 @@
+{
+  "name": "tennis-tournament-manager",
+  "version": "1.0.0",
+  "description": "Gestione tornei di tennis per WhatsApp",
+  "scripts": {
+    "dev": "echo 'Apri index.html nel browser'"
+  }
+}
